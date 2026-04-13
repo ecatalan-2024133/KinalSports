@@ -1,0 +1,98 @@
+# =========================
+# GENERAL
+# =========================
+.DS_Store
+Thumbs.db
+*.log
+*.tmp
+*.swp
+
+# =========================
+# NODE / REACT
+# =========================
+node_modules/
+.pnp/
+.pnp.js
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Lock files (⚠️ recomendable NO ignorarlos en equipo)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# Build
+dist/
+build/
+.next/
+out/
+
+# Coverage
+coverage/
+
+# Cache
+.cache/
+.parcel-cache/
+.eslintcache
+
+# React specific
+.env
+.env.*
+!.env.example
+
+# Vite
+vite.svg
+
+# =========================
+# .NET
+# =========================
+bin/
+obj/
+out/
+
+# Visual Studio / Rider
+.vs/
+.idea/
+
+# User files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build results
+*.dll
+*.exe
+*.pdb
+
+# =========================
+# TESTS
+# =========================
+TestResults/
+
+# =========================
+# DOCKER
+# =========================
+docker-compose.override.yml
+
+# =========================
+# IDEs
+# =========================
+.vscode/
+*.code-workspace
+
+# =========================
+# OS
+# =========================
+ehthumbs.db
+Desktop.ini
+
+# =========================
+# OPTIONAL (archivos generados)
+# =========================
+uploads/
+temp/
