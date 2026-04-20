@@ -1,429 +1,416 @@
-# Kinal Sports - Administration Server
+# Server Admin - API de Gestión Administrativa
 
-> **Nota**: Este proyecto fue desarrollado con fines didácticos como parte de un curso de arquitectura de microservicios. Forma parte de una serie de servicios independientes que conforman la aplicación completa "Kinal Sports".
+API RESTful para gestión administrativa de campos deportivos, reservas y torneos en la plataforma KinalSports.
 
-## Descripción
+## 📋 Descripción
 
-Microservicio de administración para la plataforma Kinal Sports. Este servicio maneja la gestión de campos deportivos, reservas de canchas, equipos deportivos y torneos. Proporciona una API RESTful completa para la administración de las instalaciones deportivas.
+Servicio backend que proporciona endpoints para que administradores gestionen campos deportivos, confirmen/rechacen reservas, administren torneos y equipos. Consume el servicio de autenticación para validar permisos de administrador.
 
-Implementa arquitectura modular con Express.js y MongoDB como base de datos.
+## 🛠️ Tech Stack
 
-## Funcionalidades Principales
-
-### Gestión de Campos Deportivos
-- Creación y actualización de campos con imágenes
-- Consulta de campos disponibles
-- Activación/desactivación de campos
-- Validación de datos de campos
-- Almacenamiento de imágenes en Cloudinary
-
-### Gestión de Reservas
-- Consulta de reservas por estado y filtros
-- Confirmación de reservas
-- Cancelación de reservas
-- Validación de conflictos de horarios
-- Verificación de disponibilidad de campos
-
-### Gestión de Equipos
-- Registro de equipos deportivos con logo
-- Actualización de información de equipos
-- Gestión de managers de equipos
-- Cambio de estado de equipos (activo/inactivo)
-- Consulta de equipos por filtros
-
-### Gestión de Torneos
-- Creación y actualización de torneos
-- Consulta de torneos activos
-- Cambio de estado de torneos
-- Eliminación lógica de torneos
-- Sistema de participación de equipos
-
-### Seguridad
-- Validación JWT para rutas protegidas
-- Rate limiting por endpoint
-- Protección con Helmet
-- CORS configurado
-- Validación de datos con express-validator
-- Manejo global de errores
-
-## Tecnologías Utilizadas
-
-### Backend
-- **Framework**: Express.js 5.x
-- **Runtime**: Node.js
-- **Lenguaje**: JavaScript (ES6 Modules)
-
-### Base de Datos
-- **ODM**: Mongoose 9.x
-- **Base de Datos**: MongoDB
-- **Esquemas**: Validación con Mongoose Schemas
-
-### Seguridad
-- **JWT**: jsonwebtoken
-- **Headers**: helmet
-- **CORS**: cors
-- **Rate Limiting**: express-rate-limit
-
-### Servicios Externos
-- **Almacenamiento**: Cloudinary (imágenes de campos y equipos)
-- **File Upload**: Multer con multer-storage-cloudinary
-
-### Validación y Logging
+- **Runtime**: Node.js 18+ (ESM)
+- **Framework**: Express 5.x
+- **Base de Datos**: MongoDB 6.0+
+- **ODM**: Mongoose 8.x
+- **Autenticación**: JWT (validación contra auth-service)
 - **Validación**: express-validator
-- **Logging**: Morgan
-- **UUID**: uuid v13
+- **Storage**: Cloudinary (imágenes de campos)
+- **Documentación**: Swagger (swagger-ui-express)
+- **Seguridad**: Helmet, CORS, Rate Limiting
 
-### Utilidades
-- **Variables de entorno**: dotenv
-- **Desarrollo**: nodemon
+## 🚀 Instalación
 
-## Endpoints API
+```bash
+# Desde la raíz del monorepo
+pnpm install
 
-Base URL: `http://localhost:{PORT}/kinalSports/v1`
-
-### Campos Deportivos (`/fields`)
-
-| Método | Ruta | Descripción | Auth |
-|--------|------|-------------|------|
-| `GET` | `/fields` | Obtener todos los campos | No |
-| `GET` | `/fields/:id` | Obtener campo por ID | No |
-| `POST` | `/fields` | Crear nuevo campo (con imagen) | Sí |
-| `PUT` | `/fields/:id` | Actualizar campo | Sí |
-| `PUT` | `/fields/:id/activate` | Activar campo | Sí |
-| `PUT` | `/fields/:id/deactivate` | Desactivar campo | Sí |
-
-### Reservas (`/reservations`)
-
-| Método | Ruta | Descripción | Auth |
-|--------|------|-------------|------|
-| `GET` | `/reservations` | Obtener reservas con filtros | Sí |
-| `GET` | `/reservations/:id` | Obtener reserva por ID | Sí |
-| `PUT` | `/reservations/:id/confirm` | Confirmar reserva | Sí |
-| `PUT` | `/reservations/:id/cancel` | Cancelar reserva | Sí |
-
-### Equipos (`/teams`)
-
-| Método | Ruta | Descripción | Auth |
-|--------|------|-------------|------|
-| `GET` | `/teams` | Obtener todos los equipos | No |
-| `GET` | `/teams/:id` | Obtener equipo por ID | No |
-| `POST` | `/teams` | Crear nuevo equipo (con logo) | Sí |
-| `PUT` | `/teams/:id` | Actualizar equipo | Sí |
-| `PUT` | `/teams/:id/activate` | Activar equipo | Sí |
-| `PUT` | `/teams/:id/deactivate` | Desactivar equipo | Sí |
-| `PUT` | `/teams/:id/manager` | Cambiar manager del equipo | Sí |
-
-### Torneos (`/tournaments`)
-
-| Método | Ruta | Descripción | Auth |
-|--------|------|-------------|------|
-| `GET` | `/tournaments` | Obtener todos los torneos | No |
-| `GET` | `/tournaments/:id` | Obtener torneo por ID | No |
-| `POST` | `/tournaments` | Crear nuevo torneo | Sí |
-| `PUT` | `/tournaments/:id` | Actualizar torneo | Sí |
-| `PUT` | `/tournaments/:id/start` | Iniciar torneo | Sí |
-| `PUT` | `/tournaments/:id/finish` | Finalizar torneo | Sí |
-| `DELETE` | `/tournaments/:id` | Eliminar torneo | Sí |
-
-### Salud (`/health`)
-
-| Método | Ruta | Descripción | Auth |
-|--------|------|-------------|------|
-| `GET` | `/health` | Estado del servicio | No |
-
-### Modelos de Request
-
-#### Crear Campo (`POST /fields`)
-```json
-{
-  "name": "Cancha Principal",
-  "description": "Cancha de fútbol profesional",
-  "type": "futbol",
-  "capacity": 100,
-  "pricePerHour": 150.00,
-  "image": "archivo.jpg" // form-data
-}
+# O específicamente este servicio
+pnpm --filter server-admin install
 ```
 
-#### Crear Equipo (`POST /teams`)
-```json
-{
-  "name": "Tigres FC",
-  "managerId": "user-id-123",
-  "members": ["userId1", "userId2"],
-  "category": "Senior",
-  "description": "Equipo profesional",
-  "logo": "archivo.jpg" // form-data
-}
+## ⚙️ Variables de Entorno
+
+Crear archivo `.env` en `server-admin/`:
+
+```env
+# Server
+NODE_ENV=development
+PORT=3002
+
+# MongoDB
+URI_MONGODB=mongodb://localhost:27017/kinalsports
+
+# JWT Configuration
+JWT_SECRET=tu-secret-key-aqui
+JWT_ISSUER=KinalSportsAuth
+JWT_AUDIENCE=KinalSportsAPI
+
+# Cloudinary (upload de imágenes de campos)
+CLOUDINARY_CLOUD_NAME=tu_cloud_name
+CLOUDINARY_API_KEY=tu_api_key
+CLOUDINARY_API_SECRET=tu_api_secret
+CLOUDINARY_FOLDER=kinalSports/fields
+CLOUDINARY_TEAMS_FOLDER=kinalSports/teams
 ```
 
-#### Confirmar Reserva (`PUT /reservations/:id/confirm`)
-```json
-{
-  "date": "2026-03-15",
-  "startTime": "10:00",
-  "endTime": "12:00",
-  "fieldId": "field-id-123"
-}
-```
-
-#### Crear Torneo (`POST /tournaments`)
-```json
-{
-  "name": "Copa Primavera 2026",
-  "description": "Torneo de temporada primavera",
-  "startDate": "2026-04-01",
-  "endDate": "2026-05-30",
-  "category": "Senior",
-  "maxTeams": 16,
-  "registrationDeadline": "2026-03-25"
-}
-```
-
-## 📁 Estructura del Proyecto
+## 📂 Estructura
 
 ```
 server-admin/
 ├── configs/
-│   ├── app.js                        # Configuración principal del servidor
-│   ├── cors.configuration.js         # Configuración de CORS
-│   ├── db.js                         # Conexión a MongoDB
-│   ├── helmet.configuration.js       # Configuración de Helmet
-│   └── rateLimit.configuration.js    # Rate limiting
-│
+│   ├── app.js                    # Configuración principal del servidor
+│   ├── db.js                     # Conexión MongoDB
+│   ├── cors-configuration.js     # Configuración CORS
+│   └── helmet-configuration.js   # Headers de seguridad
 ├── middlewares/
-│   ├── check-validators.js           # Verificación de validadores
-│   ├── delete-file-on-error.js       # Limpieza de archivos en errores
-│   ├── field-validator.js            # Validadores de campos
-│   ├── file-uploader.js              # Subida de archivos a Cloudinary
-│   ├── handle-errors.js              # Manejo global de errores
-│   ├── reservation-conflict.js       # Validación de conflictos de reservas
-│   ├── reservation-time-validation.js # Validación de horarios
-│   ├── reservation-validators.js     # Validadores de reservas
-│   ├── team-validators.js            # Validadores de equipos
-│   ├── tournament-validators.js      # Validadores de torneos
-│   ├── validate-JWT.js               # Validación de tokens JWT
-│   └── validate-role.js              # Validación de roles
-│
+│   ├── validate-JWT.js           # Verificación de tokens
+│   ├── validate-role.js          # Verificación de roles (ADMIN)
+│   ├── field-validators.js       # Validadores de campos deportivos
+│   ├── reservation-validators.js # Validadores de reservas
+│   ├── reservation-conflict.js   # Validación de conflictos
+│   ├── file-uploader.js          # Multer + Cloudinary
+│   └── handle-errors.js          # Manejo centralizado de errores
 ├── src/
-│   ├── fields/                       # Módulo de campos deportivos
-│   │   ├── field.controller.js       # Controladores
-│   │   ├── field.model.js            # Modelo de datos
-│   │   ├── field.routes.js           # Rutas
-│   │   └── field.service.js          # Lógica de negocio
-│   │
-│   ├── reservations/                 # Módulo de reservas
-│   │   ├── reservation.controller.js
-│   │   ├── reservation.model.js
-│   │   ├── reservation.routes.js
-│   │   └── reservation.service.js
-│   │
-│   ├── teams/                        # Módulo de equipos
-│   │   ├── team.controller.js
-│   │   ├── team.model.js
-│   │   ├── team.routes.js
-│   │   └── team.service.js
-│   │
-│   └── tournaments/                  # Módulo de torneos
-│       ├── tournaments.controller.js
-│       ├── tournaments.model.js
-│       ├── tournaments.routes.js
-│       └── tournaments.service.js
-│
-├── helpers/                          # Utilidades generales
-├── index.js                          # Punto de entrada
-├── package.json                      # Dependencias y scripts
-├── pnpm-lock.yaml                    # Lock file de pnpm
-└── README.md
+│   ├── fields/
+│   │   ├── field.controller.js       # Controladores de campos
+│   │   ├── field.model.js            # Modelo de campo deportivo
+│   │   └── field.routes.js           # Rutas de campos
+│   ├── reservations/
+│   │   ├── reservation.controller.js # Controladores de reservas
+│   │   ├── reservation.model.js      # Modelo de reserva
+│   │   └── reservation.routes.js     # Rutas de reservas
+│   ├── teams/
+│   │   ├── team.controller.js        # Controladores de equipo
+│   │   ├── team.model.js             # Modelo de equipos deportivo
+│   │   └── team.routes.js            # Rutas de equipos
+│   └── tournaments/
+│       ├── tournament.controller.js  # Controladores de torneos
+│       ├── tournament.model.js       # Modelo de torneo
+│       └── tournament.routes.js      # Rutas de torneos
+└── index.js                          # Punto de entrada
 ```
 
-## Configuración
-
-### Requisitos Previos
-- Node.js 18+ (recomendado Node.js 20+)
-- pnpm 10+ (Package Manager)
-- MongoDB 6+
-- Cuenta de Cloudinary (para almacenamiento de imágenes)
-
-### Variables de Entorno
-
-Crear archivo `.env` en la raíz del proyecto:
-
-```env
-# Servidor
-PORT=3000
-
-# Base de Datos
-MONGO_URI=mongodb://localhost:27017/kinal_sports_admin
-
-# JWT
-JWT_SECRET=tu-secreto-jwt-seguro-aqui
-JWT_EXPIRES_IN=7d
-
-# Cloudinary
-CLOUDINARY_CLOUD_NAME=tu-cloud-name
-CLOUDINARY_API_KEY=tu-api-key
-CLOUDINARY_API_SECRET=tu-api-secret
-
-# Rate Limiting
-RATE_LIMIT_WINDOW_MS=900000
-RATE_LIMIT_MAX_REQUESTS=100
-
-# CORS
-ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173
-```
-
-### Instalación
-
-1. **Clonar el repositorio**
-```bash
-cd server-admin
-```
-
-2. **Instalar dependencias con pnpm**
-```bash
-pnpm install
-```
-
-3. **Configurar variables de entorno**
-```bash
-cp .env.example .env
-# Editar .env con tus configuraciones
-```
-
-4. **Iniciar MongoDB**
-```bash
-# Usando Docker
-docker-compose up -d
-
-# O iniciar el servicio local
-sudo systemctl start mongod
-```
-
-5. **Ejecutar en modo desarrollo**
-```bash
-pnpm run dev
-```
-
-El servidor estará disponible en `http://localhost:3000` (o el puerto configurado)
-
-### Scripts Disponibles
+## 🎯 Scripts Disponibles
 
 ```bash
-# Desarrollo con hot reload
-pnpm run dev
+# Desarrollo con auto-reload
+pnpm --filter server-admin dev
 
 # Producción
-node index.js
+pnpm --filter server-admin start
+
+# Lint
+pnpm --filter server-admin lint
+pnpm --filter server-admin lint:fix
+
+# Format
+pnpm --filter server-admin format
+pnpm --filter server-admin format:check
 ```
 
-## Arquitectura
+## 🔌 Endpoints Principales
 
-El proyecto sigue una arquitectura modular por características:
+### Campos Deportivos
 
-- **configs/**: Configuraciones centralizadas del servidor
-- **middlewares/**: Middlewares reutilizables (validación, autenticación, errores)
-- **src/**: Módulos funcionales organizados por dominio
-  - Cada módulo contiene: model, controller, service, routes
-  - Separación clara de responsabilidades
-- **helpers/**: Utilidades y funciones auxiliares
+| Método | Endpoint                                     | Descripción             | Auth  |
+| ------ | -------------------------------------------- | ----------------------- | ----- |
+| GET    | `/kinalSportsAdmin/v1/fields`                | Listar todos los campos | Admin |
+| GET    | `/kinalSportsAdmin/v1/fields/:id`            | Obtener campo por ID    | Admin |
+| POST   | `/kinalSportsAdmin/v1/fields`                | Crear nuevo campo       | Admin |
+| PUT    | `/kinalSportsAdmin/v1/fields/:id`            | Actualizar campo        | Admin |
+| PUT    | `/kinalSportsAdmin/v1/fields/:id/activate`   | Activar campo           | Admin |
+| PUT    | `/kinalSportsAdmin/v1/fields/:id/deactivate` | Desactivar campo        | Admin |
 
-## Validaciones
+### Reservas
 
-El servidor implementa múltiples capas de validación:
+| Método | Endpoint                                        | Descripción               | Auth  |
+| ------ | ----------------------------------------------- | ------------------------- | ----- |
+| GET    | `/kinalSportsAdmin/v1/reservations`             | Listar todas las reservas | Admin |
+| GET    | `/kinalSportsAdmin/v1/reservations/:id`         | Obtener reserva por ID    | Admin |
+| PUT    | `/kinalSportsAdmin/v1/reservations/:id/confirm` | Confirmar reserva         | Admin |
 
-1. **Validación de esquemas** (Mongoose Schemas)
-2. **Validación de entrada** (express-validator)
-3. **Validación de conflictos** (reservas, horarios)
-4. **Validación JWT** (autenticación)
-5. **Validación de roles** (autorización)
+### Equipos deportivos
 
-## Manejo de Errores
+| Método | Endpoint                                    | Descripción                 | Auth  |
+| ------ | ------------------------------------------- | --------------------------- | ----- |
+| GET    | `/kinalSportsAdmin/v1/teams`                | Listar todos los equipos    | Admin |
+| GET    | `/kinalSportsAdmin/v1/teams/:id`            | Obtener un equipo por ID    | Admin |
+| POST   | `/kinalSportsAdmin/v1/teams`                | Crear un nuevo equipo       | Admin |
+| PUT    | `/kinalSportsAdmin/v1/teams/:id`            | Actualizar datos del equipo | Admin |
+| PUT    | `/kinalSportsAdmin/v1/teams/:id/activate`   | Activar equipo              | Admin |
+| PUT    | `/kinalSportsAdmin/v1/teams/:id/deactivate` | Desactivar equipo           | Admin |
+| DELETE | `/kinalSportsAdmin/v1/teams/:id`            | Eliminar equipo             | Admin |
 
-Sistema centralizado de manejo de errores:
+### Torneos
 
-- **Errores de validación**: 400 Bad Request
-- **Errores de autenticación**: 401 Unauthorized
-- **Errores de autorización**: 403 Forbidden
-- **Recursos no encontrados**: 404 Not Found
-- **Conflictos**: 409 Conflict
-- **Errores del servidor**: 500 Internal Server Error
+| Método | Endpoint                                          | Descripción                 | Auth  |
+| ------ | ------------------------------------------------- | --------------------------- | ----- |
+| GET    | `/kinalSportsAdmin/v1/tournaments`                | Listar todos los torneos    | Admin |
+| GET    | `/kinalSportsAdmin/v1/tournaments/:id`            | Obtener un torneo por ID    | Admin |
+| POST   | `/kinalSportsAdmin/v1/tournaments`                | Crear un nuevo torneo       | Admin |
+| PUT    | `/kinalSportsAdmin/v1/tournaments/:id`            | Actualizar datos del torneo | Admin |
+| PUT    | `/kinalSportsAdmin/v1/tournaments/:id/activate`   | Activar torneo              | Admin |
+| PUT    | `/kinalSportsAdmin/v1/tournaments/:id/deactivate` | Desactivar torneo           | Admin |
+| DELETE | `/kinalSportsAdmin/v1/tournaments/:id`            | Eliminar torneo             | Admin |
 
-## Integración con Microservicios
+### Ejemplo de Requests Campo
 
-Este servicio se integra con:
-
-- **Authentication Service**: Validación de tokens JWT
-- **PostgreSQL Database**: Base de datos de usuarios (indirecta)
-- **MongoDB**: Base de datos propia del servicio
-- **Cloudinary**: Almacenamiento de imágenes
-
-## Seguridad
-
-### Medidas Implementadas
-
-- ✅ Helmet para headers de seguridad
-- ✅ CORS configurado con orígenes permitidos
-- ✅ Rate limiting para prevenir abuso
-- ✅ Validación JWT en rutas protegidas
-- ✅ Validación de roles y permisos
-- ✅ Sanitización de entradas
-- ✅ Límite de tamaño de payload (10mb)
-- ✅ Validación de tipos de archivo
-- ✅ Manejo seguro de errores (sin exposición de stack traces)
-
-## Testing
+**Crear Campo:**
 
 ```bash
-# Placeholder para futuros tests
-pnpm test
-```
+POST http://localhost:3002/kinalSportsAdmin/v1/fields
+Content-Type: multipart/form-data
 
-## Health Check
-
-Verificar el estado del servidor:
-
-```bash
-curl http://localhost:3000/kinalSports/v1/health
-```
-
-Respuesta esperada:
-```json
 {
-  "status": "healthy",
-  "service": "Kinal Sports Admin Server"
+  "fieldName": "Cancha Futbol 11",
+  "description": "Cancha de futbol tamaño reglamentario",
+  "fieldType": "NATURAL",
+  "capacity": "FUTBOL_11",
+  "pricePerHour": 150.00,
+  "image": <file>
 }
 ```
 
-## Contribución
+**Listar Reservas:**
 
-Este proyecto es parte de un curso educativo. Desarrollo y contribuciones por:
+```bash
+GET http://localhost:3002/kinalSportsAdmin/v1/reservations?status=PENDING
+```
 
-- **Autor**: Braulio Echeverría
-- **Curso**: IN6AV - Kinal Guatemala 2026
-- **Catedrático**: PEM
+**Confirmar Reserva:**
 
-## Licencia
+```bash
+PUT http://localhost:3002/kinalSportsAdmin/v1/reservations/507f1f77bcf86cd799439011/confirm
+Content-Type: application/json
 
-Este proyecto está licenciado bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para más detalles.
+{
+  "confirmedBy": "admin-user-id"
+}
+```
 
-## Notas del Proyecto
+## 🗄️ Modelos de Base de Datos
 
-- ✨ Proyecto desarrollado con fines educativos
-- 🎓 Parte del curso de arquitectura de microservicios
-- 🏗️ Implementa patrones de diseño y mejores prácticas
-- 🔧 Preparado para entorno de producción con configuraciones adecuadas
-- 📚 Documentación completa para aprendizaje
+### Field (Campo Deportivo)
 
-## Recursos Adicionales
+```javascript
+{
+  _id: ObjectId,
+  fieldName: String (required, max 100),
+  description: String (max 500),
+  fieldType: String (enum: 'NATURAL', 'SINTETICA', 'CONCRETO'),
+  capacity: String (enum: 'FUTBOL_5', 'FUTBOL_7', 'FUTBOL_11'),
+  pricePerHour: Number (required, min 0),
+  photo: String (Cloudinary URL),
+  isActive: Boolean (default: true),
+  createdAt: Date,
+  updatedAt: Date
+}
+```
 
-- [Express.js Documentation](https://expressjs.com/)
-- [MongoDB Documentation](https://docs.mongodb.com/)
-- [Mongoose Documentation](https://mongoosejs.com/)
-- [Cloudinary Documentation](https://cloudinary.com/documentation)
-- [JWT Best Practices](https://jwt.io/introduction)
+### Reservation (Reserva)
 
----
+```javascript
+{
+  _id: ObjectId,
+  userId: String (UUID del auth-service),
+  fieldId: ObjectId (ref: Field),
+  startTime: Date (required),
+  endTime: Date (required),
+  status: String (enum: 'PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED', 'NO_SHOW'),
+  confirmation: {
+    confirmedAt: Date,
+    confirmedBy: String
+  },
+  lastModifiedBy: String,
+  createdAt: Date,
+  updatedAt: Date
+}
+```
 
-**Kinal Sports** - Sistema de Gestión Deportiva
-Desarrollado por Braulio Echeverría - IN6AV 2026
+### Team (Equipo Deportivo)
+
+**Listar todo:**
+
+```javascript
+GET http://localhost:3002/kinalSportsAdmin/v1/teams
+```
+
+**Listar todo:**
+
+```javascript
+GET http://localhost:3002/kinalSportsAdmin/v1/teams/67af2c9082b48b2be88bb72d
+```
+
+**Crear un quipo:**
+
+```javascript
+POST http://localhost:3002/kinalSportsAdmin/v1/teams
+
+{
+  "teamName": "Los Halcones",
+  "managerName": "Carlos López",
+  "category": "FUTBOL_11",
+  "uniformColor": "Azul",
+  "logo": <file>    # OPCIONAL
+}
+```
+
+**Actualizar equipo:**
+
+```javascript
+PUT http://localhost:3002/kinalSportsAdmin/v1/teams/67af2c9082b48b2be88bb72d
+
+{
+  "teamName": "Los Halcones FC",
+  "managerName": "Eduardo Pérez",
+  "category": "FUTBOL_11",
+  "uniformColor": "Negro",
+  "logo": <file>    # OPCIONAL (reemplaza el anterior)
+}
+```
+
+**Activar equipo:**
+
+```javascript
+PUT http://localhost:3002/kinalSportsAdmin/v1/teams/67af2c9082b48b2be88bb72d/activate
+```
+
+**Desactivar equipo:**
+
+```javascript
+PUT http://localhost:3002/kinalSportsAdmin/v1/teams/67af2c9082b48b2be88bb72d/deactivate
+```
+
+**Eliminar equipo:**
+
+```javascript
+DELETE http://localhost:3002/kinalSportsAdmin/v1/teams/67af2c9082b48b2be88bb72d
+```
+
+### Tournament (Torneo)
+
+**Listar todo:**
+
+```javascript
+GET http://localhost:3002/kinalSportsAdmin/v1/tournaments
+```
+
+**Listar todo:**
+
+```javascript
+GET http://localhost:3002/kinalSportsAdmin/v1/tournaments/67af2c9082b48b2be88bb72d
+```
+
+**Crear un torneo:**
+
+```javascript
+POST http://localhost:3002/kinalSportsAdmin/v1/tournaments
+
+{
+  "tournamentName": "Copa de Campeones",
+  "category": "FUTBOL_11",
+  "startDate": "2024-01-01",
+  "endDate": "2024-01-31",
+  "location": "Ciudad de Guatemala",
+  "description": "Torneo de fútbol de la ciudad de Guatemala",
+  "logo": <file>    # OPCIONAL
+}
+```
+
+**Actualizar torneo:**
+
+```javascript
+PUT http://localhost:3002/kinalSportsAdmin/v1/tournaments/67af2c9082b48b2be88bb72d
+
+{
+  "tournamentName": "Copa de Campeones",
+  "category": "FUTBOL_11",
+  "startDate": "2024-01-01",
+  "endDate": "2024-01-31",
+  "location": "Ciudad de Guatemala",
+  "description": "Torneo de fútbol de la ciudad de Guatemala",
+  "logo": <file>    # OPCIONAL (reemplaza el anterior)
+}
+```
+
+**Activar torneo:**
+
+```javascript
+PUT http://localhost:3002/kinalSportsAdmin/v1/tournaments/67af2c9082b48b2be88bb72d/activate
+```
+
+**Desactivar torneo:**
+
+```javascript
+PUT http://localhost:3002/kinalSportsAdmin/v1/tournaments/67af2c9082b48b2be88bb72d/deactivate
+```
+
+**Eliminar torneo:**
+
+```javascript
+DELETE http://localhost:3002/kinalSportsAdmin/v1/tournaments/67af2c9082b48b2be88bb72d
+```
+
+## 🔐 Autenticación y Autorización
+
+Este servicio **NO maneja autenticación directamente**. Consume el `auth-service` mediante:
+
+1. **Middleware `validate-JWT.js`**: Verifica token JWT en header `Authorization: Bearer <token>`
+2. **Middleware `validate-role.js`**: Valida que el usuario tenga rol `ADMIN`
+
+**Flujo de autenticación:**
+
+```
+Cliente → [JWT Token] → server-admin → validate-JWT → decodifica token →
+verifica rol ADMIN → permite acceso
+```
+
+## 🔗 Dependencias con Otros Servicios
+
+- **auth-node / auth-service**: Valida tokens JWT y obtiene información de usuario
+- **server-user**: Puede compartir modelos de Reservation (usuarios crean, admins confirman)
+- **client-admin**: Frontend que consume todos estos endpoints
+
+## 🛡️ Validaciones y Seguridad
+
+- **Validación de conflictos**: No permite reservas superpuestas en el mismo campo
+- **Validación de horarios**: Valida que startTime < endTime y duración mínima
+- **Rate limiting**: 100 requests por 15 minutos
+- **Sanitización**: express-validator sanitiza todos los inputs
+- **CORS**: Solo orígenes permitidos en `.env`
+
+## 📊 Swagger / API Documentation
+
+**Nota**: Swagger aún no está configurado en este servicio.
+
+## 🧪 Testing
+
+```bash
+# Ejecutar tests (cuando estén implementados)
+pnpm --filter server-admin test
+```
+
+## 📝 Notas de Desarrollo
+
+- El servidor escucha en el puerto definido en `.env` (default: 3002)
+- Las rutas están prefijadas con `/api`
+- Todas las rutas requieren autenticación JWT con rol ADMIN
+- Las imágenes de campos se suben automáticamente a Cloudinary
+- MongoDB se conecta automáticamente al iniciar el servidor
+- Los errores se manejan centralizadamente y devuelven JSON estructurado
+
+## 🚀 Próximas Funcionalidades
+
+- [ ] CRUD completo de torneos
+- [ ] Gestión de equipos
+- [ ] Reportes y estadísticas
+- [ ] Notificaciones push/email al confirmar reservas
+- [ ] Dashboard de métricas (reservas por mes, ingresos, etc.)
+
+## 👤 Autor
+
+**Braulio Echeverria**
+
+## 📄 Licencia
+
+MIT

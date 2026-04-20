@@ -6,27 +6,6 @@ import {
   updateFieldStatus,
 } from './field.service.js';
 
-
-export const createField = async (req, res) => {
-    try{
-    const field = await createFieldRecord({
-      fieldData: req.body,
-      file: req.file,
-    });
-    res.status(201).json({
-      success: true,
-      message: "Cancha registrada exitosamente",
-      data: field,
-    });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      message: "Error al registrar la cancha",
-      error: err.message,
-    });
-  }
-};
-
 // Obtener todos los campos con paginación y filtros
 export const getFields = async (req, res) => {
   try {
@@ -77,6 +56,27 @@ export const getFieldById = async (req, res) => {
   }
 };
 
+// Crear nuevo campo
+export const createField = async (req, res) => {
+  try {
+    const field = await createFieldRecord({
+      fieldData: req.body,
+      file: req.file,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'Campo creado exitosamente',
+      data: field,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: 'Error al crear el campo',
+      error: error.message,
+    });
+  }
+};
 
 // Actualizar campo
 export const updateField = async (req, res) => {
@@ -138,3 +138,5 @@ export const changeFieldStatus = async (req, res) => {
     });
   }
 };
+
+// Eliminar campo permanentemente

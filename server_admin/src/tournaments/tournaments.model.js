@@ -48,7 +48,7 @@ const tournamentsSchema = new mongoose.Schema(
   }
 );
 
-// Índice para optimizar búsquedas
+// Índices para optimizar búsquedas por administración
 tournamentsSchema.index({ category: 1 });
 tournamentsSchema.index({ status: 1 });
 tournamentsSchema.index({ isActive: 1 });

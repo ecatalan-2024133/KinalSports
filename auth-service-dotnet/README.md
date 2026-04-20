@@ -1,346 +1,318 @@
-# Kinal Sports - Authentication Service
+# Auth Service - Servicio de Autenticación (.NET)
 
-> **Nota**: Este proyecto fue desarrollado con fines didácticos como parte del curso de arquitectura de microservicios IN6AM. Forma parte de una serie de servicios independientes que conforman la aplicación completa "Kinal Sports".
+API RESTful de autenticación construida con ASP.NET Core y PostgreSQL con arquitectura limpia (Clean Architecture).
 
-## Descripción
+## 📋 Descripción
 
-Microservicio de autenticación y gestión de usuarios para la plataforma Kinal Sports. Este servicio maneja el registro, inicio de sesión, verificación de correo electrónico, recuperación de contraseñas y gestión de perfiles de usuario.
+Implementación alternativa del servicio de autenticación utilizando .NET 8, siguiendo principios de Clean Architecture con capas separadas (API, Application, Domain, Persistence). Proporciona funcionalidades completas de autenticación, gestión de usuarios, verificación de email y recuperación de contraseñas.
 
-Implementa arquitectura limpia (Clean Architecture) con capas bien definidas: API, Application, Domain y Persistence.
+## 🛠️ Tech Stack
 
-## Funcionalidades Principales
-
-### Autenticación y Autorización
-- Registro de usuarios con validación de datos
-- Inicio de sesión con JWT
-- Verificación de correo electrónico
-- Reenvío de correos de verificación
-- Recuperación de contraseña (Forgot Password)
-- Restablecimiento de contraseña
-- Protección de rutas con JWT Bearer Authentication
-
-### Gestión de Usuarios
-- Perfiles de usuario con foto (Cloudinary)
-- Consulta de perfil autenticado
-- Consulta de perfil por ID
-- Sistema de roles y permisos
-
-### Seguridad
-- Hashing de contraseñas con Argon2
-- Tokens JWT con expiración configurable
-- Rate limiting por endpoint
-- Middleware de manejo global de excepciones
-- Validación de datos con FluentValidation
-- Headers de seguridad (HSTS, XSS Protection, etc.)
-
-### Notificaciones
-- Envío de correos con SMTP (Gmail)
-- Plantillas HTML personalizadas
-- Logging detallado de protocolo SMTP
-- Manejo de errores de envío con fallback
-
-### Observabilidad
-- Logging estructurado con Serilog
-- Logs en consola y archivos con rotación diaria
-- Health check endpoint
-- Documentación Swagger/OpenAPI
-
-## Tecnologías Utilizadas
-
-### Backend
 - **Framework**: ASP.NET Core 8.0
-- **Lenguaje**: C# (.NET 8)
-- **Arquitectura**: Clean Architecture (4 capas)
+- **Base de Datos**: PostgreSQL 14+
+- **ORM**: Entity Framework Core 8.x
+- **Autenticación**: JWT Bearer Authentication
+- **Hashing**: ASP.NET Core Identity (PBKDF2)
+- **Validación**: FluentValidation / Data Annotations
+- **Storage**: Cloudinary (perfiles de usuario)
+- **Email**: SMTP / SendGrid
+- **Seguridad**: Rate Limiting, CORS, Security Headers
 
-### Base de Datos
-- **ORM**: Entity Framework Core 9.0
-- **Base de Datos**: PostgreSQL
-- **Migraciones**: EF Core Migrations
-- **Naming Convention**: Snake case (EFCore.NamingConventions)
-
-### Seguridad
-- **JWT**: System.IdentityModel.Tokens.Jwt
-- **Hashing**: Argon2 (Konscious.Security.Cryptography.Argon2)
-- **Authentication**: Microsoft.AspNetCore.Authentication.JwtBearer
-- **Headers**: NetEscapades.AspNetCore.SecurityHeaders
-
-### Servicios Externos
-- **Email**: MailKit (SMTP)
-- **Almacenamiento**: Cloudinary (imágenes de perfil)
-
-### Validación y Logging
-- **Validación**: FluentValidation
-- **Logging**: Serilog.AspNetCore
-- **Documentación**: Swashbuckle.AspNetCore (Swagger)
-
-## Endpoints API
-
-Base URL: `http://localhost:5296/api/v1`
-
-### Autenticación (`/auth`)
-
-| Método | Ruta | Descripción | Auth |
-|--------|------|-------------|------|
-| `POST` | `/auth/register` | Registrar nuevo usuario | No |
-| `POST` | `/auth/login` | Iniciar sesión | No |
-| `POST` | `/auth/verify-email` | Verificar correo electrónico | No |
-| `POST` | `/auth/resend-verification` | Reenviar correo de verificación | No |
-| `POST` | `/auth/forgot-password` | Solicitar recuperación de contraseña | No |
-| `POST` | `/auth/reset-password` | Restablecer contraseña | No |
-| `GET` | `/auth/profile` | Obtener perfil autenticado | Sí |
-| `POST` | `/auth/profile/by-id` | Obtener perfil por ID | No |
-
-### Salud (`/health`)
-
-| Método | Ruta | Descripción | Auth |
-|--------|------|-------------|------|
-| `GET` | `/health` | Estado del servicio | No |
-
-### Modelos de Request
-
-#### Registro (`/auth/register`)
-```json
-{
-  "email": "usuario@ejemplo.com",
-  "username": "usuario123",
-  "password": "Contraseña123!",
-  "confirmPassword": "Contraseña123!",
-  "firstName": "Juan",
-  "lastName": "Pérez",
-  "profilePicture": "archivo.jpg"
-}
-```
-
-#### Login (`/auth/login`)
-```json
-{
-  "emailOrUsername": "usuario@ejemplo.com",
-  "password": "Contraseña123!"
-}
-```
-
-#### Verificación de Email (`/auth/verify-email`)
-```json
-{
-  "token": "token-de-verificacion"
-}
-```
-
-#### Recuperación de Contraseña (`/auth/forgot-password`)
-```json
-{
-  "email": "usuario@ejemplo.com"
-}
-```
-
-#### Restablecimiento de Contraseña (`/auth/reset-password`)
-```json
-{
-  "token": "token-de-recuperacion",
-  "password": "NuevaContraseña123!",
-  "confirmPassword": "NuevaContraseña123!"
-}
-```
-
-## 📁 Estructura del Proyecto
+## 🏗️ Arquitectura
 
 ```
-auth-service/
-├── src/
-│   ├── AuthService.Api/              # Capa de presentación
-│   │   ├── Controllers/              # Controladores REST
-│   │   ├── Extensions/               # Configuraciones y extensiones
-│   │   ├── Middlewares/              # Middlewares personalizados
-│   │   ├── ModelBinders/             # Model binders personalizados
-│   │   ├── Models/                   # Modelos de API
-│   │   ├── keys/                     # Claves de encriptación
-│   │   ├── logs/                     # Archivos de log
-│   │   ├── appsettings.json          # Configuración principal
-│   │   ├── appsettings.Development.json  # Configuración desarrollo
-│   │   ├── AuthService.Api.csproj    # Archivo de proyecto
-│   │   ├── AuthService.Api.http      # Archivo de pruebas HTTP
-│   │   └── Program.cs                # Punto de entrada
-│   │
-│   ├── AuthService.Application/      # Capa de aplicación
-│   │   ├── DTOs/                     # Data Transfer Objects
-│   │   │   └── Email/                # DTOs de email
-│   │   ├── Exceptions/               # Excepciones personalizadas
-│   │   ├── Extensions/               # Extensiones y utilidades
-│   │   ├── Interfaces/               # Interfaces de servicios
-│   │   ├── Services/                 # Implementación de servicios
-│   │   ├── Validators/               # Validadores FluentValidation
-│   │   └── AuthService.Application.csproj
-│   │
-│   ├── AuthService.Domain/           # Capa de dominio
-│   │   ├── Constants/                # Constantes del dominio
-│   │   ├── Entities/                 # Entidades del dominio
-│   │   ├── Enums/                    # Enumeraciones
-│   │   ├── Interfaces/               # Interfaces de repositorios
-│   │   └── AuthService.Domain.csproj
-│   │
-│   └── AuthService.Persistence/      # Capa de persistencia
-│       ├── Data/                     # DbContext y configuraciones
-│       ├── Migrations/               # Migraciones de EF Core
-│       ├── Repositories/             # Implementación de repositorios
-│       └── AuthService.Persistence.csproj
-│
-├── AuthService.sln                   # Solución de Visual Studio
-├── global.json                       # Versión de .NET
-├── .gitignore                        # Archivos ignorados por git
-├── LICENSE                           # Licencia MIT
-└── README.md                         # Este archivo
+src/
+├── AuthService.Api/              # Capa de presentación (Controllers, Middlewares)
+│   ├── Controllers/
+│   ├── Extensions/
+│   ├── Middlewares/
+│   └── Program.cs
+├── AuthService.Application/      # Capa de aplicación (Services, DTOs)
+│   ├── DTOs/
+│   ├── Interfaces/
+│   ├── Services/
+│   └── Validators/
+├── AuthService.Domain/           # Capa de dominio (Entities, Enums)
+│   ├── Entities/
+│   ├── Enums/
+│   └── Interfaces/
+└── AuthService.Persistence/      # Capa de persistencia (DbContext, Repositories)
+    ├── Data/
+    ├── Migrations/
+    └── Repositories/
 ```
 
-## Configuración
+## 🚀 Instalación
 
-### Requisitos Previos
-- .NET 8.0 SDK o superior
-- PostgreSQL 13 o superior
-- Cuenta de Cloudinary (opcional, para imágenes de perfil)
-- Cuenta de Gmail con App Password (para envío de emails)
-
-### Variables de Configuración
-
-Crear `appsettings.Development.json` en `src/AuthService.Api/`:
-
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Database=kinal_sports_users;Username=usuario;Password=password;Port=5432"
-  },
-  "CloudinarySettings": {
-    "CloudName": "tu-cloud-name",
-    "ApiKey": "tu-api-key",
-    "ApiSecret": "tu-api-secret",
-    "Folder": "kinal-sports/profiles",
-    "DefaultAvatarPath": "avatar-default.png"
-  },
-  "SmtpSettings": {
-    "Host": "smtp.gmail.com",
-    "Port": "465",
-    "EnableSsl": "true",
-    "Username": "tu-email@gmail.com",
-    "Password": "tu-app-password",
-    "FromEmail": "tu-email@gmail.com",
-    "FromName": "Kinal Sports Soporte",
-    "Enabled": true,
-    "Timeout": 30000,
-    "UseImplicitSsl": true,
-    "IgnoreCertificateErrors": false,
-    "ProtocolLogPath": "logs/smtp-protocol.log"
-  },
-  "AppSettings": {
-    "FrontendUrl": "http://localhost:5173"
-  },
-  "JwtSettings": {
-    "SecretKey": "tu-clave-secreta-muy-segura-minimo-32-caracteres",
-    "Issuer": "KinalSports",
-    "Audience": "KinalSports",
-    "ExpirationMinutes": 60
-  }
-}
-```
-
-### Instalación y Ejecución
-
-1. **Clonar el repositorio**
 ```bash
-git clone <url-repositorio>
-cd auth-service
-```
+# Desde la raíz del monorepo
+pnpm install
 
-2. **Restaurar dependencias**
-```bash
+# Restaurar paquetes .NET
+cd authentication-service/auth-service
 dotnet restore
 ```
 
-3. **Aplicar migraciones a la base de datos**
-```bash
-cd src/AuthService.Api
-dotnet ef database update
+## ⚙️ Variables de Entorno
+
+Crear archivo `.env` o configurar en `appsettings.Development.json`:
+
+```json
+{
+    "ConnectionStrings": {
+        "DefaultConnection": "Host=localhost;Port=5432;Database=kinalsports_auth_net;Username=postgres;Password=tu_password"
+    },
+    "Jwt": {
+        "Secret": "tu-secret-key-super-segura-de-minimo-32-caracteres",
+        "Issuer": "KinalSportsAuthService",
+        "Audience": "KinalSportsClients",
+        "ExpiryMinutes": 10080,
+        "RefreshExpiryDays": 30
+    },
+    "Cloudinary": {
+        "CloudName": "tu_cloud_name",
+        "ApiKey": "tu_api_key",
+        "ApiSecret": "tu_api_secret"
+    },
+    "Email": {
+        "Host": "smtp.gmail.com",
+        "Port": 587,
+        "Username": "tu-email@gmail.com",
+        "Password": "tu-app-password",
+        "FromName": "KinalSports",
+        "FromAddress": "noreply@kinalsports.com"
+    },
+    "RateLimiting": {
+        "PermitLimit": 100,
+        "Window": 15,
+        "QueueLimit": 10
+    },
+    "AllowedOrigins": "http://localhost:5173;http://localhost:3000"
+}
 ```
 
-4. **Ejecutar el servicio**
+## 📂 Estructura de Capas
+
+### API Layer (AuthService.Api)
+
+- **Controllers**: AuthController, UsersController, HealthController
+- **Extensions**: Configuración de servicios, autenticación, rate limiting
+- **Middlewares**: Global exception handling
+- **Program.cs**: Punto de entrada y configuración
+
+### Application Layer (AuthService.Application)
+
+- **Services**: AuthService, UserManagementService, EmailService, CloudinaryService
+- **DTOs**: RegisterDto, LoginDto, AuthResponseDto, UserDetailsDto
+- **Interfaces**: Contratos de servicios
+- **Validators**: Validación de archivos y datos
+
+### Domain Layer (AuthService.Domain)
+
+- **Entities**: User, UserProfile, UserEmail, UserPasswordReset, Role, UserRole
+- **Enums**: UserRole (enum)
+- **Interfaces**: IUserRepository, IRoleRepository
+- **Constants**: RoleConstants
+
+### Persistence Layer (AuthService.Persistence)
+
+- **Data**: ApplicationDbContext, DataSeeder
+- **Repositories**: UserRepository, RoleRepository
+- **Migrations**: Entity Framework migrations
+
+## 🎯 Scripts Disponibles
+
 ```bash
-dotnet run
+# Desarrollo con hot reload
+pnpm --filter auth-service dev
+# o
+dotnet watch --project src/AuthService.Api
+
+# Build
+pnpm --filter auth-service build
+# o
+dotnet build
+
+# Ejecutar en producción
+pnpm --filter auth-service start
+# o
+dotnet run --project src/AuthService.Api
+
+# Tests
+pnpm --filter auth-service test
+# o
+dotnet test
+
+# Format
+pnpm --filter auth-service format
+# o
+dotnet format
+
+# Limpiar
+pnpm --filter auth-service clean
+# o
+dotnet clean
 ```
 
-El servicio estará disponible en: `http://localhost:5296`
+## 🗄️ Migraciones de Base de Datos
 
-### Documentación Swagger/OpenAPI
-
-La documentación interactiva de la API está disponible en:
-
-- **Interfaz Swagger UI**: `http://localhost:5296/swagger`
-- **Especificación JSON**: `http://localhost:5296/swagger/v1/swagger.json`
-
-Accede a Swagger para explorar todos los endpoints, ver ejemplos de request/response y probar la API directamente desde el navegador.
-
-## Seguridad
-
-### Rate Limiting
-- **AuthPolicy**: 5 solicitudes / 1 minuto (registro, login)
-- **ApiPolicy**: 20 solicitudes / 1 minuto (endpoints generales)
-
-### Headers de Seguridad
-- HSTS (HTTP Strict Transport Security)
-- X-Content-Type-Options: nosniff
-- X-Frame-Options: DENY
-- X-XSS-Protection: 1; mode=block
-- Referrer-Policy: no-referrer
-
-### Almacenamiento de Claves
-- Las claves de encriptación se almacenan en `keys/`
-- Nunca se deben commitear al repositorio
-- Configurar en `.gitignore` apropiadamente
-
-### JWT
-- Tokens con tiempo de expiración configurable
-- Validación de issuer y audience
-- Almacenamiento seguro de claves
-
-## Logging
-
-Los logs se almacenan en:
-- **Consola**: Formato simplificado para desarrollo
-- **Archivos**: `logs/auth-service-YYYY-MM-DD.txt` (rotación diaria)
-- **SMTP Protocol**: `logs/smtp-protocol.log` (cuando está habilitado)
-
-Configuración:
-- **Retención**: 30 días
-- **Nivel mínimo**: Information en desarrollo
-- **Formato**: JSON estructurado en archivos
-
-## Desarrollo
-
-### Crear una nueva migración
 ```bash
-cd src/AuthService.Api
-dotnet ef migrations add NombreDeLaMigracion
-dotnet ef database update
+# Crear nueva migración
+dotnet ef migrations add MigrationName --project src/AuthService.Persistence --startup-project src/AuthService.Api
+
+# Aplicar migraciones
+dotnet ef database update --project src/AuthService.Persistence --startup-project src/AuthService.Api
+
+# Revertir migración
+dotnet ef database update PreviousMigration --project src/AuthService.Persistence --startup-project src/AuthService.Api
+
+# Eliminar última migración
+dotnet ef migrations remove --project src/AuthService.Persistence --startup-project src/AuthService.Api
 ```
 
-### Ejecutar pruebas HTTP
-El archivo `src/AuthService.Api/AuthService.Api.http` contiene ejemplos de solicitudes HTTP para probar los endpoints localmente.
+## 🔌 Endpoints Principales
 
-## Licencia
+### Autenticación
 
-Este proyecto está licenciado bajo la Licencia MIT. Consulte el archivo [LICENSE](LICENSE) para más detalles.
+| Método | Endpoint                        | Descripción                    | Auth |
+| ------ | ------------------------------- | ------------------------------ | ---- |
+| POST   | `/api/auth/register`            | Registrar nuevo usuario        | No   |
+| POST   | `/api/auth/login`               | Iniciar sesión                 | No   |
+| POST   | `/api/auth/verify-email`        | Verificar email con token      | No   |
+| POST   | `/api/auth/resend-verification` | Reenviar email de verificación | No   |
+| POST   | `/api/auth/forgot-password`     | Solicitar reset de contraseña  | No   |
+| POST   | `/api/auth/reset-password`      | Resetear contraseña con token  | No   |
 
-## Autor
+### Gestión de Usuarios
 
-**Braulio Echeverría**  
-Curso IN6AM - Kinal Guatemala 2026
+| Método | Endpoint               | Descripción               | Auth       |
+| ------ | ---------------------- | ------------------------- | ---------- |
+| GET    | `/api/users`           | Listar todos los usuarios | Sí (Admin) |
+| GET    | `/api/users/{id}`      | Obtener usuario por ID    | Sí (Admin) |
+| PUT    | `/api/users/{id}/role` | Actualizar rol de usuario | Sí (Admin) |
+| DELETE | `/api/users/{id}`      | Desactivar usuario        | Sí (Admin) |
 
-## Microservicios Relacionados
+### Health Check
 
-Este servicio es parte de la arquitectura de microservicios de Kinal Sports:
-- **Authentication Service** (este repositorio)
-- Users Management Service
-- Sports Events Service
-- Notifications Service
-- API Gateway
+| Método | Endpoint     | Descripción                | Auth |
+| ------ | ------------ | -------------------------- | ---- |
+| GET    | `/health`    | Estado del servicio        | No   |
+| GET    | `/health/db` | Estado de la base de datos | No   |
 
----
+### Ejemplo de Request
 
-**Nota**: Este es un proyecto educativo desarrollado como parte del aprendizaje de arquitectura de microservicios. No está destinado para uso en producción sin las debidas validaciones y pruebas de seguridad adicionales.
+**Registro:**
+
+```bash
+POST https://localhost:7001/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "johndoe",
+  "email": "john@example.com",
+  "password": "SecurePass123!",
+  "firstName": "John",
+  "lastName": "Doe"
+}
+```
+
+**Login:**
+
+```bash
+POST https://localhost:7001/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "password": "SecurePass123!"
+}
+```
+
+**Response:**
+
+```json
+{
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+    "refreshToken": "refresh_token_here",
+    "expiresAt": "2025-11-27T12:00:00Z",
+    "user": {
+        "id": "uuid-here",
+        "username": "johndoe",
+        "email": "john@example.com",
+        "roles": ["USER"]
+    }
+}
+```
+
+## 🔐 Seguridad
+
+- **Password Hashing**: PBKDF2 con salt (ASP.NET Core Identity)
+- **JWT**: Tokens firmados con HS256
+- **Rate Limiting**: 100 requests por 15 minutos
+- **CORS**: Orígenes configurables
+- **Security Headers**: HSTS, X-Content-Type-Options, X-Frame-Options
+- **Input Validation**: FluentValidation + Data Annotations
+- **Exception Handling**: Middleware global para manejo de errores
+
+## 🔗 Dependencias con Otros Servicios
+
+- **server-admin**: Valida tokens JWT de administradores
+- **server-user**: Valida tokens JWT de usuarios
+- **client-admin**: Consume endpoints de autenticación
+- **auth-node**: Servicio paralelo/alternativo (misma base de datos)
+
+## 🧪 Testing
+
+```bash
+# Ejecutar todos los tests
+dotnet test
+
+# Con cobertura
+dotnet test /p:CollectCoverage=true /p:CoverageReportsFormat=lcov
+
+# Tests específicos
+dotnet test --filter FullyQualifiedName~AuthService.Tests.AuthControllerTests
+```
+
+## 📝 Configuración Adicional
+
+### HTTPS Development Certificate
+
+```bash
+dotnet dev-certs https --trust
+```
+
+### appsettings.json Environments
+
+- `appsettings.json`: Configuración base
+- `appsettings.Development.json`: Desarrollo local
+- `appsettings.Production.json`: Producción
+
+## 🚀 Deployment
+
+```bash
+# Publicar para producción
+dotnet publish -c Release -o ./publish
+
+# Ejecutar publicación
+cd publish
+dotnet AuthService.Api.dll
+```
+
+## 📦 Paquetes NuGet Principales
+
+- `Microsoft.EntityFrameworkCore` (8.x)
+- `Npgsql.EntityFrameworkCore.PostgreSQL`
+- `Microsoft.AspNetCore.Authentication.JwtBearer`
+- `Microsoft.AspNetCore.Identity.EntityFrameworkCore`
+- `FluentValidation.AspNetCore`
+- `CloudinaryDotNet`
+- `Swashbuckle.AspNetCore` (Swagger)
+
+## 👤 Autor
+
+**Braulio Echeverria**
+
+## 📄 Licencia
+
+MIT

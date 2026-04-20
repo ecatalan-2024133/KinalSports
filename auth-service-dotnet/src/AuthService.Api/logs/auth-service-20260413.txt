@@ -1,0 +1,4 @@
+[2026-04-13 08:31:20 INF] Verificando conexión a la base de datos... {"SourceContext":"Program"}
+[2026-04-13 08:31:21 INF] Base de datos lista. Ejecutando datos semilla... {"SourceContext":"Program"}
+[2026-04-13 08:31:21 INF] Inicialización de base de datos completada exitosamente {"SourceContext":"Program"}
+[2026-04-13 08:31:21 INF] API de AuthService está ejecutándose en http://localhost:5235. Endpoint de salud: http://localhost:5235/api/v1/health {"SourceContext":"Program"}

@@ -18,6 +18,12 @@ const teamSchema = new mongoose.Schema(
       enum: ['FUTBOL_7', 'FUTBOL_11'],
       required: [true, 'La categoría del equipo es requerida'],
     },
+    members: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
     logo: {
       type: String,
       default: 'fields/kinal_sports_nyvxo5',
@@ -27,6 +33,7 @@ const teamSchema = new mongoose.Schema(
       default: true,
     },
   },
+
   {
     timestamps: true,
     versionKey: false,

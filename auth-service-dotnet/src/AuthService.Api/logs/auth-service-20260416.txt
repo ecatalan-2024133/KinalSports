@@ -1,0 +1,13 @@
+[2026-04-16 08:12:12 INF] Verificando conexión a la base de datos... {"SourceContext":"Program"}
+[2026-04-16 08:12:13 INF] Base de datos lista. Ejecutando datos semilla... {"SourceContext":"Program"}
+[2026-04-16 08:12:13 INF] Inicialización de base de datos completada exitosamente {"SourceContext":"Program"}
+[2026-04-16 08:12:13 INF] API de AuthService está ejecutándose en http://localhost:5235. Endpoint de salud: http://localhost:5235/api/v1/health {"SourceContext":"Program"}
+[2026-04-16 08:13:41 WRN] Failed to determine the https port for redirect. {"EventId":{"Id":3,"Name":"FailedToDeterminePort"},"SourceContext":"Microsoft.AspNetCore.HttpsPolicy.HttpsRedirectionMiddleware","RequestId":"0HNKRO9E8JTND:00000001","RequestPath":"/api/v1/auth/login","ConnectionId":"0HNKRO9E8JTND"}
+[2026-04-16 08:13:41 INF] HTTP OPTIONS /api/v1/auth/login responded 204 in 24.5026 ms {"SourceContext":"Serilog.AspNetCore.RequestLoggingMiddleware","RequestId":"0HNKRO9E8JTND:00000001","ConnectionId":"0HNKRO9E8JTND"}
+[2026-04-16 08:14:43 INF] HTTP GET /api/v1/health responded 404 in 1794.3434 ms {"SourceContext":"Serilog.AspNetCore.RequestLoggingMiddleware","RequestId":"0HNKRO9E8JTNF:00000001","ConnectionId":"0HNKRO9E8JTNF"}
+[2026-04-16 08:14:49 INF] HTTP POST /api/v1/health responded 404 in 0.9513 ms {"SourceContext":"Serilog.AspNetCore.RequestLoggingMiddleware","RequestId":"0HNKRO9E8JTNF:00000002","ConnectionId":"0HNKRO9E8JTNF"}
+[2026-04-16 08:14:56 INF] HTTP GET /api/v1/health responded 404 in 3.0532 ms {"SourceContext":"Serilog.AspNetCore.RequestLoggingMiddleware","RequestId":"0HNKRO9E8JTNF:00000003","ConnectionId":"0HNKRO9E8JTNF"}
+[2026-04-16 08:30:03 INF] Verificando conexión a la base de datos... {"SourceContext":"Program"}
+[2026-04-16 08:30:04 INF] Base de datos lista. Ejecutando datos semilla... {"SourceContext":"Program"}
+[2026-04-16 08:30:04 INF] Inicialización de base de datos completada exitosamente {"SourceContext":"Program"}
+[2026-04-16 08:30:04 INF] API de AuthService está ejecutándose en http://localhost:5235. Endpoint de salud: http://localhost:5235/api/v1/health {"SourceContext":"Program"}

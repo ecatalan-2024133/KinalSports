@@ -1,22 +1,5 @@
-import Field from "./field.model.js";
+import Field from './field.model.js';
 import { cloudinary } from '../../middlewares/file-uploader.js';
-
-export const createFieldRecord = async ({ fieldData, file }) => {
-  const data = { ...fieldData };
-
-  if (file) {
-    const filename = file.filename;
-    const match = filename.match(/fields\/.+$/);
-    data.photo = match ? match[0] : filename;
-  } else {
-    data.photo = "fields/kinal_sports_hg091f";
-  }
-
-  const field = new Field(data);
-  await field.save();
-  return field;
-};
-
 
 export const fetchFields = async ({
   page = 1,
@@ -49,21 +32,34 @@ export const fetchFieldById = async (id) => {
   return Field.findById(id);
 };
 
+export const createFieldRecord = async ({ fieldData, file }) => {
+  const data = { ...fieldData };
+
+  if (file) {
+    data.photo = file.path; // Guardar la ruta relativa del archivo subido
+  } else {
+    data.photo = 'fields/kinal_sports_nyvxo5';
+  }
+
+  const field = new Field(data);
+  await field.save();
+  return field;
+};
+
 export const updateFieldRecord = async ({ id, updateData, file }) => {
   const data = { ...updateData };
 
   if (file) {
+    // Buscar campo actual
     const currentField = await Field.findById(id);
 
     if (currentField && currentField.photo) {
-      const photoPath = currentField.photo;
-      const photoWithoutExt = photoPath.substring(
-        0,
-        photoPath.lastIndexOf('.')
-      );
-      const publicId = `kinal_sports/${photoWithoutExt}`;
-
       try {
+        // Obtener public_id exacto desde file.filename anterior
+        const url = currentField.photo;
+        const parts = url.split('/');
+        const fileNameWithExt = parts[parts.length - 1]; // ej: cancha123.jpg
+        const publicId = `kinal_sports/fields/${fileNameWithExt.split('.')[0]}`; // quitar extensión
         await cloudinary.uploader.destroy(publicId);
       } catch (deleteError) {
         console.error(
@@ -72,12 +68,8 @@ export const updateFieldRecord = async ({ id, updateData, file }) => {
       }
     }
 
-    const extension = file.path.split('.').pop();
-    const filename = file.filename;
-    const relativePath = filename.includes('fields/')
-      ? filename.substring(filename.indexOf('fields/'))
-      : filename;
-    data.photo = `${relativePath}.${extension}`;
+    // Guardar nueva URL pública en la DB
+    data.photo = file.path;
   }
 
   return Field.findByIdAndUpdate(id, data, {
