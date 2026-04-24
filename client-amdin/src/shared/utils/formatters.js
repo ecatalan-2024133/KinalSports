@@ -6,7 +6,7 @@ export const formatDate = (isoString) => {
         day: "2-digit",
     });
 };
-
+ 
 export const formatTime = (isoString) => {
     const date = new Date(isoString);
     return date.toLocaleTimeString("es-GT", {
@@ -14,11 +14,26 @@ export const formatTime = (isoString) => {
         minute: "2-digit",
     });
 };
-
+ 
 export const formatDateForInput = (isoString) => {
     const date = new Date(isoString);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0"); // meses 01-12
     const day = String(date.getDate()).padStart(2, "0"); // días 01-31
     return `${year}-${month}-${day}`; // formato YYYY-MM-DD
+};
+ 
+export const resolveCloudinaryImageUrl = (photoPath) => {
+    if (!photoPath) return "/placeholder-image.png";
+ 
+    if (/^https?:\/\//i.test(photoPath)) {
+        return photoPath;
+    }
+ 
+    const baseFolder = import.meta.env.VITE_CLOUDINARY_BASE_FOLDER;
+    if (baseFolder) {
+        return `${baseFolder.replace(/\/$/, '')}/${photoPath.replace(/^\//, '')}`;
+    }
+ 
+    return photoPath;
 };
