@@ -1,11 +1,10 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
-import { 
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import {
   login as loginRequest,
-  register as registerRequest
-
-} from "../../../shared/apis";
-import { showError } from "../../../shared/utils/toast.js";
+  register as registerRequest,
+} from '../../../shared/apis';
+import { showError } from '../../../shared/utils/toast.js';
 
 export const useAuthStore = create(
   persist(
@@ -22,7 +21,7 @@ export const useAuthStore = create(
       checkAuth: () => {
         const token = get().token;
         const role = get().user?.role;
-        const isAdmin = role === "ADMIN_ROLE";
+        const isAdmin = role === 'ADMIN_ROLE';
 
         if (token && !isAdmin) {
           set({
@@ -32,7 +31,7 @@ export const useAuthStore = create(
             expiresAt: null,
             isLoadingAuth: true,
             isAuthenticated: false,
-            error: "No tienes permiso para acceder a esta aplicación",
+            error: 'No tienes permiso para acceder a esta aplicación',
           });
           return;
         }
@@ -60,8 +59,8 @@ export const useAuthStore = create(
           const { data } = await loginRequest({ emailOrUsername, password });
 
           const role = data?.userDetails?.role;
-          if (role !== "ADMIN_ROLE") {
-            const message = "No tienes permiso para acceder a esta aplicación";
+          if (role !== 'ADMIN_ROLE') {
+            const message = 'No tienes permiso para acceder a esta aplicación';
 
             set({
               user: null,
@@ -88,7 +87,7 @@ export const useAuthStore = create(
           return { success: true };
         } catch (err) {
           const message =
-            err.response?.data?.message || "Error al iniciar sesión";
+            err.response?.data?.message || 'Error al iniciar sesión';
           set({ error: message, loading: false });
           return { success: false, error: message };
         }
@@ -96,24 +95,24 @@ export const useAuthStore = create(
 
       register: async (formData) => {
         try {
-          set ({ loading: true, error: null })
+          set({ loading: true, error: null });
           const { data } = await registerRequest(formData);
-          set({ loadin: false })
-          return{
+          set({ loadin: false });
+          return {
             success: true,
             emailVerificationRequired: data?.emailVerificationRequired,
-            data
-          }
+            data,
+          };
         } catch (err) {
           const message =
-            err.response?.data?.message || "Error al registrar usuario";
+            err.response?.data?.message || 'Error al registrar usuario';
           set({ error: message, loading: false });
           return { success: false, error: message };
         }
-      }
+      },
     }),
-    { 
-      name: "auth-KS-IN6AM",
+    {
+      name: 'auth-KS-IN6AM',
       partialize: (state) => ({
         user: state.user,
         token: state.token,
@@ -121,6 +120,6 @@ export const useAuthStore = create(
         expiresAt: state.expiresAt,
         isAuthenticated: state.isAuthenticated,
       }),
-    },
-  ),
+    }
+  )
 );
