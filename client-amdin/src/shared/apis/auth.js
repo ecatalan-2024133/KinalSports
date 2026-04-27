@@ -1,16 +1,20 @@
-import { axiosAuth } from './api.js'
+import { axiosAuth } from './api.js';
 
 export const login = async (data) => {
-    return await axiosAuth.post('/auth/login', data)
-}
+  return await axiosAuth.post('/auth/login', data);
+};
 
 export const getAllUsers = async () => {
-    const { data } = await axiosAuth.get('/auth/users');
-    return { users: data }
-}
+  const { data } = await axiosAuth.get('/auth/users');
+  return { users: data };
+};
 
 export const register = async (data) => {
-    return await axiosAuth.post('/auth/register', data, {
-        headers: { "Content-Type": "multipart/form-data" }
-    })
-}
+  return await axiosAuth.post('/auth/register', data, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+};
+
+export const verifyEmail = async (token) => {
+  return await axiosAuth.get('/auth/verify-email', { token } );
+};
